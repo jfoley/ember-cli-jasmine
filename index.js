@@ -110,6 +110,17 @@ module.exports = {
     this.jshintrc = app.options.jshintrc;
   },
 
+  contentFor: function(type) {
+    if (type === 'test-body') {
+      console.log('injecting test body');
+      return this.testBodyTemplate();
+    }
+  },
+
+  testBodyTemplate: function() {
+    return fs.readFileSync(path.join(__dirname, 'templates', 'test-body.html'));
+  },
+
   postprocessTree: function(type, tree) {
     if(type != 'all') {
       return tree;
