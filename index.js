@@ -81,6 +81,7 @@ module.exports = {
 
   included: function(app) {
     this._super.included(app);
+    this.jshintrc = app.options.jshintrc;
 
     if(app.tests) {
       app.import('./vendor/ember-test-helpers-tests.amd.js', {type: 'test'});
