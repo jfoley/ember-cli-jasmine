@@ -28,21 +28,21 @@ function injector(ModuleConstructor, moduleName, options) {
     module.teardown().then(() => done());
   });
 }
-function InjectHelpers(moduleName, options) {
+function injectHelpers(moduleName, options) {
   injector(TestModule, moduleName, options);
 }
 
-function InjectModelHelpers(moduleName, options) {
+function injectModelHelpers(moduleName, options) {
   injector(TestModuleForModel, moduleName, options);
 }
 
-function InjectComponentHelpers(componentName, options) {
+function injectComponentHelpers(componentName, options) {
   injector(TestModuleForComponent, componentName, options);
 }
 
 export {
   setResolver,
-  InjectHelpers,
-  InjectModelHelpers,
-  InjectComponentHelpers,
+  injectHelpers,
+  injectModelHelpers,
+  injectComponentHelpers,
 }
