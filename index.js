@@ -25,8 +25,6 @@ JasmineHinter.prototype.processErrors = function(relativePath, jshintErrors) {
   } else {
     this.jshintErrors[relativePath] = jshintErrors;
   }
-
-
 };
 
 JasmineHinter.prototype.write = function (readTree, destDir) {
@@ -39,7 +37,7 @@ JasmineHinter.prototype.write = function (readTree, destDir) {
         expectations = _.map(errors, function(error) {
           if(error === null) { return; }
 
-          return 'expect(\"' + error.reason + '\").toBeUndefined();';
+          return 'expect(\"'+ relativePath + '@' + error.line + ':' + error.character + ' ' + error.reason + '\").toBeUndefined();';
         }).join('\n');
       }
 
@@ -48,11 +46,10 @@ JasmineHinter.prototype.write = function (readTree, destDir) {
     });
 
     var specString = 'describe(\'jshint\', function() {' +
-        itStrings.join('\n') +
-        '});';
+      itStrings.join('\n') +
+    '});';
 
     var jshintSpecPath = path.join(destDir, 'jshint-spec.js');
-    //var jshintSpecPath = 'yospec.js';
     fs.writeFileSync(jshintSpecPath, specString);
   })
 };
@@ -84,17 +81,6 @@ module.exports = {
 
   included: function(app) {
     this._super.included(app);
-    //this.options = {};
-    this.options = app.options.jasmine || {};
-
-    if(this.options.jshintSpec == true) {
-      return JasmineHinter(tree, {
-        jshintrcPath: this.jshintrc[type],
-        description: 'JSHint ' + type + '- Jasmine',
-        disableTestGenerator: true
-        //testGenerator: testGenerator
-      });
-    }
 
     if(app.tests) {
       app.import('./vendor/ember-test-helpers-tests.amd.js', {type: 'test'});
@@ -106,13 +92,10 @@ module.exports = {
 
       app.import('./vendor/jasmine/lib/jasmine-core' + '/boot.js', {type: 'test'});
     }
-
-    this.jshintrc = app.options.jshintrc;
   },
 
   contentFor: function(type) {
     if (type === 'test-body') {
-      console.log('injecting test body');
       return this.testBodyTemplate();
     }
   },
@@ -142,16 +125,11 @@ module.exports = {
     return tree;
   },
 
-  //lintTree: function(type, tree) {
-  //  if(this.options.jshintSpec === true) {
-  //    return JasmineHinter(tree, {
-  //      jshintrcPath: this.jshintrc[type],
-  //      description: 'JSHint ' + type + '- Jasmine',
-  //      disableTestGenerator: true
-  //      //testGenerator: testGenerator
-  //    });
-  //  } else {
-  //    return tree;
-  //  }
-  //}
+  lintTree: function(type, tree) {
+    return JasmineHinter(tree, {
+      jshintrcPath: this.jshintrc[type],
+      description: 'JSHint ' + type + '- Jasmine',
+      disableTestGenerator: true
+    });
+  }
 };
